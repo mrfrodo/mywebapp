@@ -101,6 +101,28 @@
                         <password>sa</password>
                     </security>
                 </datasource>
+
+                <datasource jndi-name="java:jboss/datasources/MyWebAppDS" pool-name="MyWebAppDS" enabled="true" use-java-context="true">
+                    <connection-url>jdbc:postgresql://localhost:5432/MYWEBAPP</connection-url>
+                    <driver>postgresql</driver>
+
+                    <driver-class>org.postgresql.Driver</driver-class>
+
+                    <pool>
+                        <min-pool-size>
+                            2
+                        </min-pool-size>
+                        <max-pool-size>
+                            20
+                        </max-pool-size>
+                    </pool>
+                    <security>
+                        <user-name>postgres</user-name>
+                        <password>root</password>
+                    </security>
+                </datasource>
+
+
                 <drivers>
                     <driver name="mysql" module="com.mysql"/>
                     <driver name="h2" module="com.h2database.h2">
@@ -247,6 +269,19 @@
                         <policy-module code="Delegating" flag="required"/>
                     </authorization>
                 </security-domain>
+
+                <security-domain name="mysecuritydomain" cache-type="default">
+                    <authentication>
+                        <login-module code="Database" flag="required">
+                            <module-option name="password-stacking" value="useFirstPass"/>
+                            <module-option name="dsJndiName" value="java:jboss/datasources/MyWebAppDS"/>
+                            <module-option name="principalsQuery" value="select 'secretpassword'"/>
+                            <module-option name="rolesQuery" value="select 'secretrole'"/>
+                        </login-module>
+                    </authentication>
+                </security-domain>
+
+
             </security-domains>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:threads:1.1"/>
